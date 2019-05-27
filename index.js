@@ -1,16 +1,32 @@
 const fs = require('fs');
 const excel = require('excel4node');
+const readline = require('readline');
+const stream = require('stream');
+const all = [];
 
 async function extract() {
     console.log('---------Script iniciado---------');
-    const content = await fs.readFileSync(`files/xaa`).toString();
+
+    const instream = fs.createReadStream(`files/xaa`);
+    const outstream = new stream();
+    const rl = readline.createInterface(instream, outstream);
+
+    rl.on('line', line => {
+        all.push(extractOne(line));
+    });
+
+    rl.on('close', () => {
+        const filter = all.filter(item => item.tipoDeResgistro !== '6' && item.tipoDeResgistro !== '2')
+        console.log(filter.length);
+        generateExcel(filter);
+    })
 
 
-    const cnpjs = content.split('\n').map(item => {
-        return extractOne(item);
-    }).filter(item => item.tipoDeResgistro !== '6' && item.tipoDeResgistro !== '2');
-
-    generateExcel(cnpjs);
+    // const cnpjs = content.split('\n').map(item => {
+    //     return extractOne(item);
+    // }).filter(item => item.tipoDeResgistro !== '6' && item.tipoDeResgistro !== '2');
+    //
+    // generateExcel(cnpjs);
 
     console.log('---------Concluido---------\'');
 }
