@@ -2,7 +2,7 @@ const fs = require('fs');
 const excel = require('excel4node');
 
 async function extract() {
-    console.log('---------------');
+    console.log('---------Script iniciado---------');
     const content = await fs.readFileSync(`files/xaa`).toString();
 
 
@@ -10,14 +10,9 @@ async function extract() {
         return extractOne(item);
     }).filter(item => item.tipoDeResgistro !== '6' && item.tipoDeResgistro !== '2');
 
-    console.log(cnpjs);
-
     generateExcel(cnpjs);
 
-    // console.log(content.split('\n')[4]);
-    // const a = extractOne(content.split('\n')[4]);
-    // console.log(a);
-    // console.log('---------------');
+    console.log('---------Concluido---------\'');
 }
 
 function extractOne(data) {
@@ -76,10 +71,36 @@ function extractOne(data) {
     }
 }
 
-function generateExcel(cnpjs) {
+async function generateExcel(cnpjs) {
     const workbook = new excel.Workbook();
 
     const worksheet = workbook.addWorksheet('Sheet 1');
+
+    worksheet.cell(1, 1).string('tipoDeResgistro');
+    worksheet.cell(1, 2).string('indicadorFullDiario');
+    worksheet.cell(1, 3).string('tipoAtualizacao');
+    worksheet.cell(1, 4).string('cnpj');
+    worksheet.cell(1, 5).string('identificadorMatrizFilial');
+    worksheet.cell(1, 6).string('razaoSocial');
+    worksheet.cell(1, 7).string('nomeFantasia');
+    worksheet.cell(1, 8).string('situacaoCadastral');
+    worksheet.cell(1, 9).string('dataSituacaoCadastral');
+    worksheet.cell(1, 10).string('motivoSituacaoCadastral');
+    worksheet.cell(1, 11).string('nmCidadeExterior');
+    worksheet.cell(1, 12).string('coPais');
+    worksheet.cell(1, 13).string('nmPais');
+    worksheet.cell(1, 14).string('codigoNaturezaJuridica');
+    worksheet.cell(1, 15).string('dataInicioAtivadade');
+    worksheet.cell(1, 16).string('cnaeFiscal');
+    worksheet.cell(1, 17).string('descricaoTipoLogradouro');
+    worksheet.cell(1, 18).string('logradouro');
+    worksheet.cell(1, 19).string('numero');
+    worksheet.cell(1, 20).string('complemento');
+    worksheet.cell(1, 21).string('bairro');
+    worksheet.cell(1, 22).string('cep');
+    worksheet.cell(1, 23).string('uf');
+    worksheet.cell(1, 24).string('codigoMunicipio');
+    worksheet.cell(1, 25).string('municipio');
 
     cnpjs.forEach((item, index) => {
         worksheet.cell(index + 2, 1).string(item.tipoDeResgistro);
