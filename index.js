@@ -3,19 +3,20 @@ const readline = require('readline');
 const stream = require('stream');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Empresa = mongoose.model('empresa', new Schema({}, {strict: false}));
 
 async function extract() {
     console.log('---------Script iniciado---------');
 
-    const instream = fs.createReadStream(`files/xba`);
+    const instream = fs.createReadStream(`K3241.K03200DV.D90607.L00001`);
     const outstream = new stream();
     const rl = readline.createInterface(instream, outstream);
 
-    rl.on('line', line => {
+    rl.on('line', async line => {
         const json = extractOne(line);
         if (json.tipoDeResgistro === '1') {
             console.log(json);
-            save(json);
+            await save(json);
         }
     });
 
@@ -122,18 +123,14 @@ function toDate(str) {
 }
 
 function save(json) {
-    const Empresa = mongoose.model('Empresa', Schema({}, {strict: false}));
     const empresa = new Empresa(json);
-    console.log(empresa);
     empresa.save();
 }
 
 const mongoenv = {
     host: 'localhost',
     port: '27017',
-    db: 'dados-publicos',
-    user: undefined,
-    pass: undefined
+    db: 'dados_publicos'
 };
 
 console.log(`mongodb://${mongoenv.host}:${mongoenv.port}/${mongoenv.db}`);
